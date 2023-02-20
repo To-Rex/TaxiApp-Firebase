@@ -31,8 +31,8 @@ class _SampesPageState extends State<RegisterPage> with SingleTickerProviderStat
     super.dispose();
   }
 
-  /*void registerUser(String email, String password) async {
-    *//*if (Platform.isAndroid) {
+  void registerUser(String email, String password) async {
+    if (Platform.isAndroid) {
       try{
         await _auth.createUserWithEmailAndPassword(email: email, password: password);
       } on FirebaseAuthException catch (e) {
@@ -59,13 +59,10 @@ class _SampesPageState extends State<RegisterPage> with SingleTickerProviderStat
       } catch (e) {
         print(e);
       }
-    }*//*
+    }
 
 
-  }*/
-
-  //phone auth register user
-  Future<void> phoneAuth
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -108,7 +105,7 @@ class _SampesPageState extends State<RegisterPage> with SingleTickerProviderStat
           ElevatedButton(
             onPressed: () {
               //firebase auth email and password register user
-              //registerUser(_email.text, _password.text);
+              registerUser(_email.text, _password.text);
             },
             child: const Text('Submit'),
           ),
