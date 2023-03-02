@@ -6,6 +6,10 @@
     <string>Location permission is needed to show you nearby drivers</string>
     <key>NSLocationAlwaysUsageDescription</key>
     <string>Location permission is needed to show you nearby drivers</string>
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>Location permission is needed to show you nearby drivers</string>
+    <key>NSCameraUsageDescription</key>
+    <string>Camera permission is needed to take pictures of your documents</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
