@@ -1,4 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:location/location.dart';
 
 class SamplePage extends StatefulWidget {
   const SamplePage({super.key});
@@ -9,27 +13,58 @@ class SamplePage extends StatefulWidget {
 
 class _SampesPageState extends State<SamplePage> with SingleTickerProviderStateMixin {
 
+  late GoogleMapController mapController;
+  late LocationData _locationData;
 
-  @override
-  void initState() {
-    super.initState();
+  Future<void> _getCurrentLocation() async {
+    Location location = Location();
+
+    bool _serviceEnabled;
+    PermissionStatus _permissionGranted;
+
+    _serviceEnabled = await location.serviceEnabled();
+    if (!_serviceEnabled) {
+      _serviceEnabled = await location.requestService();
+      if (!_serviceEnabled) {
+        return;
+      }
+    }
+    _permissionGranted = await location.hasPermission();
+    if (_permissionGranted == PermissionStatus.denied) {
+      _permissionGranted = await location.requestPermission();
+      if (_permissionGranted != PermissionStatus.granted) {
+        return;
+      }
+    }
+
+    _locationData = await location.getLocation();
+    if (_locationData != null) {
+      mapController.animateCamera(
+        CameraUpdate.newCameraPosition(
+          CameraPosition(
+            target: LatLng(_locationData.latitude!, _locationData.longitude!),
+            zoom: 14,
+          ),
+        ),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(0), // here the desired height
-        child: AppBar(
-          backgroundColor: const Color.fromRGBO(33, 158, 188, 10),
+      body: GoogleMap(
+        mapType: MapType.hybrid,
+        onMapCreated: (GoogleMapController controller) {
+          mapController = controller;
+          _getCurrentLocation();
+        },
+        initialCameraPosition: const CameraPosition(
+          target: LatLng(41.3111, 69.2797), // Default location for the map
+          zoom: 14,
         ),
-      ),
-      body: Column(
-        children: const [
-          Text(''),
-          //floating button default
-        ],
+        myLocationEnabled: true,
+        myLocationButtonEnabled: true,
       ),
     );
   }

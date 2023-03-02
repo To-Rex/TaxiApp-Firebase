@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:taxi_uz/auth/register_page.dart';
+import 'package:taxi_uz/auth/sample_page.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -26,7 +27,7 @@ class _SampesPageState extends State<SplashPage> with SingleTickerProviderStateM
           backgroundColor: const Color.fromRGBO(33, 158, 188, 10),
         ),
       ),
-      body: RegisterPage(),
+      body: SamplePage(),
     );
   }
 }

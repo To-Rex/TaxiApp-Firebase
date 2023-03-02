@@ -12,8 +12,7 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _SampesPageState extends State<RegisterPage> with SingleTickerProviderStateMixin {
-  final _email = TextEditingController();
-  final _password = TextEditingController();
+  final _phone = TextEditingController();
 
 
   final _auth = FirebaseAuth.instance;
@@ -26,43 +25,36 @@ class _SampesPageState extends State<RegisterPage> with SingleTickerProviderStat
 
   @override
   void dispose() {
-    _email.dispose();
-    _password.dispose();
+    _phone.dispose();
     super.dispose();
   }
 
-  void registerUser(String email, String password) async {
-    if (Platform.isAndroid) {
-      try{
-        await _auth.createUserWithEmailAndPassword(email: email, password: password);
-      } on FirebaseAuthException catch (e) {
-        if (e.code == 'weak-password') {
-          print('The password provided is too weak.');
-        } else if (e.code == 'email-already-in-use') {
-          print('The account already exists for that email.');
+  void registerUser(String phone) async {
+    //firebase auth phone number
+    _auth.verifyPhoneNumber(
+      phoneNumber: phone,
+      verificationCompleted: (PhoneAuthCredential credential) async {
+        await _auth.signInWithCredential(credential);
+      },
+      verificationFailed: (FirebaseAuthException e) {
+        if (e.code == 'invalid-phone-number') {
+          print('The provided phone number is not valid.');
         }
-      } catch (e) {
-        print(e);
-      }
-    }
-    // if platform ios
-    if (Platform.isIOS) {
-      await Firebase.initializeApp();
-      try{
-        await _auth.createUserWithEmailAndPassword(email: email, password: password);
-      } on FirebaseAuthException catch (e) {
-        if (e.code == 'weak-password') {
-          print('The password provided is too weak.');
-        } else if (e.code == 'email-already-in-use') {
-          print('The account already exists for that email.');
-        }
-      } catch (e) {
-        print(e);
-      }
-    }
+      },
+      codeSent: (String verificationId, int? resendToken) async {
+        // Update the UI - wait for the user to enter the SMS code
+        final String smsCode = '212343';
 
+        // Create a PhoneAuthCredential with the code
+        final PhoneAuthCredential credential = PhoneAuthProvider.credential(verificationId: verificationId, smsCode: smsCode);
 
+        // Sign the user in (or link) with the credential
+        await _auth.signInWithCredential(credential);
+      },
+      codeAutoRetrievalTimeout: (String verificationId) {},
+    );
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -77,37 +69,29 @@ class _SampesPageState extends State<RegisterPage> with SingleTickerProviderStat
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          //firebase auth email and password
-          //text fild email
-          TextField(
-            controller: _email,
-            decoration: const InputDecoration(
-              border: OutlineInputBorder(),
-              labelText: 'Email',
+          //firebase auth phone
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 20),
+            decoration: BoxDecoration(
+              color: Colors.grey[200],
+              borderRadius: BorderRadius.circular(10),
+            ),
+            //the bottom line of the text field
+            child: TextField(
+              controller: _phone,
+              decoration: const InputDecoration(
+                border: InputBorder.none,
+                hintText: 'Phone',
+                prefixIcon: Icon(Icons.phone),
+              ),
             ),
           ),
-          SizedBox(
-            height: 10,
-          ),
-          //text fild password
-          TextField(
-            controller: _password,
-            decoration: const InputDecoration(
-              border: OutlineInputBorder(),
-              labelText: 'Password',
-            ),
-          ),
-
-          SizedBox(
-            height: 10,
-          ),
-          //text submit button
+          const SizedBox(height: 10),
           ElevatedButton(
             onPressed: () {
-              //firebase auth email and password register user
-              registerUser(_email.text, _password.text);
+              registerUser(_phone.text);
             },
-            child: const Text('Submit'),
+            child: const Text('Register'),
           ),
         ],
       ),
