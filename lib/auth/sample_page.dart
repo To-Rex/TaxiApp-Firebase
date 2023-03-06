@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
-import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 
 class SamplePage extends StatefulWidget {
   const SamplePage({super.key});
@@ -103,7 +102,7 @@ class _SampesPageState extends State<SamplePage> with SingleTickerProviderStateM
                 polylineId: const PolylineId('1'),
                 visible: true,
                 points: [
-                  LatLng(37.78581538706099, -122.40640070289375),
+                  LatLng(Melat, Melang),
                   LatLng(lat, lang),
                 ],
                 width: 5,
